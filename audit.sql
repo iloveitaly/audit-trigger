@@ -187,7 +187,7 @@ CREATE OR REPLACE FUNCTION audit.audit_table(
 DECLARE stm_targets text = 'INSERT OR UPDATE OR DELETE OR TRUNCATE';
 _q_txt text;
 _ignored_cols_snip text = '';
-BEGIN PERFORM deaudit_table(target_table);
+BEGIN PERFORM audit.deaudit_table(target_table);
 IF audit_rows THEN IF array_length(ignored_cols, 1) > 0 THEN _ignored_cols_snip = ', ' || quote_literal(ignored_cols);
 END IF;
 _q_txt = 'CREATE TRIGGER audit_trigger_row AFTER ' || CASE
@@ -249,11 +249,11 @@ SELECT audit.audit_table($1, BOOLEAN 't', BOOLEAN 't', BOOLEAN 't');
 $body$ LANGUAGE 'sql';
 COMMENT ON FUNCTION audit.audit_table(regclass) IS $body$
 Add auditing support to the given table.Row - level changes will be logged with full client query text.No cols are ignored.$body$;
-CREATE OR REPLACE FUNCTION deaudit_table(target_table regclass) RETURNS void AS $body$ BEGIN EXECUTE 'DROP TRIGGER IF EXISTS audit_trigger_row ON ' || target_table;
+CREATE OR REPLACE FUNCTION audit.deaudit_table(target_table regclass) RETURNS void AS $body$ BEGIN EXECUTE 'DROP TRIGGER IF EXISTS audit_trigger_row ON ' || target_table;
 EXECUTE 'DROP TRIGGER IF EXISTS audit_trigger_stm ON ' || target_table;
 END;
 $body$ language 'plpgsql';
-COMMENT ON FUNCTION deaudit_table(regclass) IS $body$ Remove auditing support to the given table.$body$;
+COMMENT ON FUNCTION audit.deaudit_table(regclass) IS $body$ Remove auditing support to the given table.$body$;
 CREATE OR REPLACE VIEW audit.tableslist AS
 SELECT DISTINCT triggers.trigger_schema AS schema,
     triggers.event_object_table AS auditedtable
