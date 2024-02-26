@@ -249,11 +249,11 @@ SELECT audit.audit_table($1, BOOLEAN 't', BOOLEAN 't', BOOLEAN 't');
 $body$ LANGUAGE 'sql';
 COMMENT ON FUNCTION audit.audit_table(regclass) IS $body$
 Add auditing support to the given table.Row - level changes will be logged with full client query text.No cols are ignored.$body$;
-CREATE OR REPLACE FUNCTION deaudit_table(target_table regclass) RETURNS void AS $body$ BEGIN EXECUTE 'DROP TRIGGER IF EXISTS audit_trigger_row ON ' || target_table;
+CREATE OR REPLACE FUNCTION audit.deaudit_table(target_table regclass) RETURNS void AS $body$ BEGIN EXECUTE 'DROP TRIGGER IF EXISTS audit_trigger_row ON ' || target_table;
 EXECUTE 'DROP TRIGGER IF EXISTS audit_trigger_stm ON ' || target_table;
 END;
 $body$ language 'plpgsql';
-COMMENT ON FUNCTION deaudit_table(regclass) IS $body$ Remove auditing support to the given table.$body$;
+COMMENT ON FUNCTION audit.deaudit_table(regclass) IS $body$ Remove auditing support to the given table.$body$;
 CREATE OR REPLACE VIEW audit.tableslist AS
 SELECT DISTINCT triggers.trigger_schema AS schema,
     triggers.event_object_table AS auditedtable
