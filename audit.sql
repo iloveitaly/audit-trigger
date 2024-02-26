@@ -187,7 +187,7 @@ CREATE OR REPLACE FUNCTION audit.audit_table(
 DECLARE stm_targets text = 'INSERT OR UPDATE OR DELETE OR TRUNCATE';
 _q_txt text;
 _ignored_cols_snip text = '';
-BEGIN PERFORM deaudit_table(target_table);
+BEGIN PERFORM audit.deaudit_table(target_table);
 IF audit_rows THEN IF array_length(ignored_cols, 1) > 0 THEN _ignored_cols_snip = ', ' || quote_literal(ignored_cols);
 END IF;
 _q_txt = 'CREATE TRIGGER audit_trigger_row AFTER ' || CASE
